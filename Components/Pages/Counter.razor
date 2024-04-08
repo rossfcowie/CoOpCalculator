@@ -1,18 +1,351 @@
 ﻿@page "/counter"
 
-<PageTitle>Counter</PageTitle>
+@using Data
 
-<h1>Counter</h1>
+@using Microsoft.AspNetCore.Authorization
 
-<p role="status">Current count: @currentCount</p>
+@attribute [Authorize]
+@inject ServerService ss;
 
-<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+<PageTitle>Game</PageTitle>
 
-@code {
-    private int currentCount = 0;
-
-    private void IncrementCount()
+    @if(gameClient != null)
+{
+    @if (gameServer.ingame)
     {
-        currentCount++;
+        <h1>@gameClient!.myserver.GoalValue</h1>
+
+        <h2>@(gameClient!.otherValue * newValue)</h2>
+        <p>@gameClient!.otherValue</p>
+        <p>
+            @newValue
+        </p>
+        <div class="row">
+            <div class="col-2">
+                @if (recomendvalue().Equals("Delete"))
+                {
+                    <button  style="width:-webkit-fill-available; Background-Color:lightyellow; color:black" class="btn btn-primary" @onclick="DeleteClick">Delete</button>
+
+                }
+                else
+                {
+                    <button style="width:-webkit-fill-available;" class="btn btn-primary" @onclick="DeleteClick">Delete</button>
+
+                }
+
+            </div>
+            <div class="col-2">
+                @if (recomendvalue().Equals("0"))
+                {
+                    <button  style="width:-webkit-fill-available; Background-Color:lightyellow; color:black" class="btn btn-primary" @onclick="() => Clicked(0)">0</button>
+
+                }
+                else
+                {
+                    <button style="width:-webkit-fill-available;" class="btn btn-primary" @onclick="() => Clicked(0)">0</button>
+
+                }
+            </div>
+            <div class="col-2">
+                @if (recomendvalue().Equals("CE"))
+                {
+                    <button  style="width:-webkit-fill-available; Background-Color:lightyellow; color:black" class="btn btn-primary" @onclick="CEclick">CE</button>
+
+                }
+                else
+                {
+                    <button style="width:-webkit-fill-available;" class="btn btn-primary" @onclick="CEclick">CE</button>
+
+                }
+
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-2">
+                @if (recomendvalue().Equals("1"))
+                {
+                    <button style="width:-webkit-fill-available; Background-Color:lightyellow; color:black" class="btn btn-primary" @onclick="() => Clicked(1)">1</button>
+
+                }
+                else
+                {
+                    <button style="width:-webkit-fill-available;"  class="btn btn-primary" @onclick="() => Clicked(1)">1</button>
+
+                }
+
+            </div>
+            <div class="col-2">
+                @if (recomendvalue().Equals("2"))
+                {
+                    <button  style="width:-webkit-fill-available; Background-Color:lightyellow; color:black" class="btn btn-primary" @onclick="() => Clicked(2)">2</button>
+
+                }
+                else
+                {
+                    <button style="width:-webkit-fill-available;" class="btn btn-primary" @onclick="() => Clicked(2)">2</button>
+
+                }
+
+            </div>
+            <div class="col-2">
+
+                @if (recomendvalue().Equals("3"))
+                {
+                    <button  style="width:-webkit-fill-available; Background-Color:lightyellow; color:black" class="btn btn-primary" @onclick="() => Clicked(3)">3</button>
+
+                }
+                else
+                {
+                    <button style="width:-webkit-fill-available;" class="btn btn-primary" @onclick="() => Clicked(3)">3</button>
+
+                }
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-2">
+                @if (recomendvalue().Equals("4"))
+                {
+                    <button  style="width:-webkit-fill-available; Background-Color:lightyellow; color:black" class="btn btn-primary" @onclick="() => Clicked(4)">4</button>
+
+                }
+                else
+                {
+                    <button style="width:-webkit-fill-available;" class="btn btn-primary" @onclick="() => Clicked(4)">4</button>
+
+                }
+
+            </div>
+            <div class="col-2">
+                @if (recomendvalue().Equals("5"))
+                {
+                    <button  style="width:-webkit-fill-available; Background-Color:lightyellow; color:black" class="btn btn-primary" @onclick="() => Clicked(5)">5</button>
+
+                }
+                else
+                {
+                    <button style="width:-webkit-fill-available;" class="btn btn-primary" @onclick="() => Clicked(5)">5</button>
+
+                }
+            </div>
+            <div class="col-2">
+
+                @if (recomendvalue().Equals("6"))
+                {
+                    <button  style="width:-webkit-fill-available; Background-Color:lightyellow; color:black" class="btn btn-primary" @onclick="() => Clicked(6)">6</button>
+
+                }
+                else
+                {
+                    <button style="width:-webkit-fill-available;" class="btn btn-primary" @onclick="() => Clicked(6)">6</button>
+
+                }
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-2">
+                @if (recomendvalue().Equals("7"))
+                {
+                    <button  style="width:-webkit-fill-available; Background-Color:lightyellow; color:black" class="btn btn-primary" @onclick="() => Clicked(7)">7</button>
+
+                }
+                else
+                {
+                    <button style="width:-webkit-fill-available;" class="btn btn-primary" @onclick="() => Clicked(7)">7</button>
+
+                }
+
+            </div>
+            <div class="col-2">
+                @if (recomendvalue().Equals("8"))
+                {
+                    <button  style="width:-webkit-fill-available; Background-Color:lightyellow; color:black" class="btn btn-primary" @onclick="() => Clicked(8)">8</button>
+
+                }
+                else
+                {
+                    <button style="width:-webkit-fill-available;" class="btn btn-primary" @onclick="() => Clicked(8)">8</button>
+
+                }
+            </div>
+            <div class="col-2">
+                @if (recomendvalue().Equals("9"))
+                {
+                    <button  style="width:-webkit-fill-available; Background-Color:lightyellow; color:black" class="btn btn-primary" @onclick="() => Clicked(9)">9</button>
+
+                }
+                else
+                {
+                    <button style="width:-webkit-fill-available;" class="btn btn-primary" @onclick="() => Clicked(9)">9</button>
+
+                }
+            </div>
+        </div>
+    }
+    else
+    {
+        <p>Success took only @gameServer.t.Elapsed</p>
+        <button style="width:-webkit-fill-available;" class="btn btn-primary" @onclick="Play">Play</button>
+    }
+    }
+    else
+    {
+        <button style="width:-webkit-fill-available;" class="btn btn-primary" @onclick="Play">Play</button>
+    }
+   
+@code {
+    private GameServer gameServer {
+        get
+        {
+            if(mymatcher is not null)
+            {
+                if (ss.checkMatchMake(mymatcher))
+                {
+                    return mymatcher.gameServer;
+                }
+                else
+                {
+                    return null;
+                }
+
+
+            }
+            else
+            {
+                return null;
+            }
+        }
+        set
+        {
+
+        }
+    }
+
+    private GameClient gameClient { get {
+            if(mymatcher is not null && gameServer is not null)
+            {
+
+                return gameServer.Getmy(mymatcher.id);
+            }
+            else
+            {
+                return null;
+            }
+
+        }
+        set { } 
+    }
+
+    private ApplicationUser myAccount;
+    private int newValue = 10;
+    private string newValueStr = "10";
+    private Matcher mymatcher;
+
+    private void DeleteClick()
+    {
+        newValueStr = newValueStr.Remove(newValueStr.Length);
+        newValue = int.Parse(newValueStr);
+        if (newValue > 9) { 
+            gameServer.send(mymatcher.id, newValue);
+        }
+    }
+    private void CEclick()
+    {
+        newValueStr = "";
+        newValue = 0;
+        if(newValue>9){
+            gameServer.send(mymatcher.id, newValue);
+        }
+    }
+
+    private EventCallback Clicked(int i)
+    {
+        newValueStr = newValueStr + i.ToString();
+        newValue = int.Parse(newValueStr);
+        if (gameServer is not null)
+        {
+            if (newValue > 9)
+            {
+                gameServer.send(mymatcher.id, newValue);
+            }
+        }
+        return new EventCallback();
+    }
+    private void Play()
+    {
+        if(mymatcher is null){
+
+            Byte[] x = GetByteArray();
+            mymatcher = ss.StartMatchMake(x);
+        }
+        else
+        {
+            if(gameServer is not null)
+            {
+                if (!gameServer.ingame)
+                {
+                    Byte[] x = GetByteArray();
+                    mymatcher = ss.StartMatchMake(x);
+
+                }
+            }
+        }
+        ss.checkMatchMake(mymatcher);
+
+    }
+    private byte[] GetByteArray()
+    {
+        Random rnd = new Random();
+        byte[] byteArray = new byte[32]; // Convert KB to bytes
+        rnd.NextBytes(byteArray);
+        return byteArray;
+    }
+    private Timer timer;
+
+    protected override void OnInitialized()
+    {
+        // Set up the timer to tick every second
+        timer = new Timer(TickTimer, null, 1000, 1000);
+    }
+
+    private int calculateRecomended()
+    {
+        if(gameClient is not null)
+        {
+
+            return gameClient.targetValue / gameClient.otherValue;
+        }
+        return 0;
+    }
+    void TickTimer(object state)
+    {
+        InvokeAsync(StateHasChanged);
+    }
+    string recomendvalue()
+    {
+        if (gameServer is not null)
+        {
+            
+        if (gameServer.t.Elapsed > TimeSpan.FromSeconds(30))
+        {
+            var x = newValue.ToString();
+            var y = calculateRecomended().ToString();
+            if (y.StartsWith(x))
+            {
+                if (y.Length > x.Length)
+                {
+                    return y[x.Length].ToString();
+                }
+            }
+            if (newValue == 0)
+            {
+                    return y[0].ToString();
+                }
+                return "CE";
+
+        }
+        }
+        return "";
     }
 }
