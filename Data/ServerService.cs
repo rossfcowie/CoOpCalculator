@@ -83,30 +83,6 @@ namespace CoOpCalculator.Data
                 matchMaker.Remove(Queue1[i + 1]);
             }
         }
-        public async Task matchMake4(List<Matcher> Queue4)
-        {
-
-            Random rnd = new Random();
-            for (int i = 0; i < Queue4.Count - 1; i += 2)
-            {
-                var x = Queue4[i];
-                var y = Queue4[i + 1];
-                var gs = new GameServer();
-                gs.player1ID = x.id;
-                gs.player2ID = y.id;
-                gameServers.Add(x.id, gs);
-                gameServers.Add(y.id, gs);
-                Queue4[i].gameServer = gs;
-                Queue4[i + 1].gameServer = gs;
-                Queue4[i].matched = true;
-                Queue4[i + 1].matched = true;
-                gs.start(4);
-                allmatchers.Add(Queue4[i], 4);
-                allmatchers.Add(Queue4[i + 1], 4);
-                matchMaker.Remove(Queue4[i]);
-                matchMaker.Remove(Queue4[i + 1]);
-            }
-        }
         public async Task matchMake3(List<Matcher> Queue3)
         {
 
@@ -157,7 +133,7 @@ namespace CoOpCalculator.Data
         }
         public void matchMake() {
             if (matchMaker.Count >= 2) {
-                List<Matcher> Queue1 = new List<Matcher>(), Queue2 = new List<Matcher>(), Queue3 = new List<Matcher>(), Queue4 = new List<Matcher>();
+                List<Matcher> Queue1 = new List<Matcher>(), Queue2 = new List<Matcher>(), Queue3 = new List<Matcher>();
                 foreach(Matcher m in matchMaker.Keys)
                 {
                     switch (matchMaker.GetValueOrDefault(m)) { 
@@ -172,15 +148,35 @@ namespace CoOpCalculator.Data
                             Queue3.Add(m);
                         break;
                     case 4:
-                            Queue4.Add(m);
-                        break;
+                            if (Queue1.Count % 2 == 1)
+                            {
+                                Queue1.Add(m);
+                            }
+                            else
+                            {
+                                if (Queue2.Count % 2 == 1)
+                                {
+                                    Queue2.Add(m);
+                                }
+                                else
+                                {
+                                    if (Queue3.Count % 2 == 1)
+                                    {
+                                        Queue3.Add(m);
+                                    }
+                                    else
+                                    {
+                                        Queue1.Add(m);
+                                    }
+                                }
+                            }
+                            break;
                     }
                     }
                 gameServers.Clear();
                 matchMake1(Queue1);
                 matchMake2(Queue2);
                 matchMake3(Queue3);
-                matchMake4(Queue4);
             }
         }
     }

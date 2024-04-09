@@ -20,7 +20,7 @@ namespace CoOpCalculator.Data
         public Stopwatch t;
         public TimeSpan total = TimeSpan.Zero;
         public bool ingame = false;
-        private int gamemode = 1;
+        public int gamemode = 1;
         public void start(int gm)
         {
             gamemode = gm;

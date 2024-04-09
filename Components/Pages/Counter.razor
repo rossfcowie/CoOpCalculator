@@ -11,23 +11,33 @@
 {
     @if (gameServer.ingame)
     {
-        <h1>@gameClient!.myserver.GoalValue</h1>
+        {        gamemode = gameServer.gamemode;    }
+   <h1>@gameClient!.myserver.GoalValue</h1>
         @switch (gamemode)
         {
             case 1:
-            <h2>@(gameClient!.otherValue * newValue)</h2>
+                <h2>@(gameClient!.otherValue * newValue)</h2><br/>
+                <h2>@gameClient!.otherValue</h2>
+                <br />
+                <h2>*</h2>
+                <h2>@newValue</h2>
             break;
             case 2:
-            <h2>@(gameClient!.otherValue + newValue)</h2>
+                <h2>@(gameClient!.otherValue + newValue)</h2>
+                <br />
+                <h2>@gameClient!.otherValue</h2>
+                <br />
+                <h2>+</h2>
+                <h2>@newValue</h2>
             break;
             case 3:
                 <h2>@(gameClient!.otherValue - newValue)</h2>
-                <h2>@(newValue - gameClient!.otherValue)</h2>
-                break;
-            case 4:
-                <h2>@(gameClient!.otherValue / newValue)</h2>
-                <h2>@(newValue / gameClient!.otherValue)</h2>
-                break;
+                <br />
+                <h2>@gameClient!.otherValue</h2>
+                <br />
+                <h2>-</h2>
+                <h2>@newValue</h2>
+            break;
 
         }
         <p>@gameClient!.otherValue</p>
@@ -209,7 +219,7 @@
         <option value="1">Multiply</option>
         <option value="2">Add</option>
         <option value="3">Subtract</option>
-        <option value="4">Divide</option>
+        <option value="4">Any</option>
     </InputSelect>
         <p>@ss.queued People in the queue</p>
         <button style="width:-webkit-fill-available;" class="btn btn-primary" @onclick="Play">Play</button>
