@@ -15,13 +15,31 @@ namespace CoOpCalculator.Data
         public Dictionary<TimeSpan, int> Player2Values = new Dictionary<TimeSpan, int>();
         public Byte[] player1ID { get; set; }
         public Byte[] player2ID { get; set; }
+        public TimeSpan player1Live { get; set; } = TimeSpan.Zero;
+        public TimeSpan player2Live { get; set; } = TimeSpan.Zero;
         public Stopwatch t;
         public TimeSpan total = TimeSpan.Zero;
         public bool ingame = false;
-        public void start()
+        private int gamemode = 1;
+        public void start(int gm)
         {
+            gamemode = gm;
             Random rnd = new Random();
-            GoalValue = rnd.Next(10, 99) * rnd.Next(10, 99);
+             switch (gamemode)
+            {
+                case 1:
+                    GoalValue = rnd.Next(10, 99) * rnd.Next(10, 99);
+                    break;
+                case 2:
+                    GoalValue = rnd.Next(10, 99) + rnd.Next(10, 99);
+                    break;
+                case 3:
+                    GoalValue = rnd.Next(10, 99) - rnd.Next(10, 99);
+                    break;
+                case 4:
+                    GoalValue = rnd.Next(10, 99) / rnd.Next(10, 99);
+                    break;
+            }
             Player1Value = rnd.Next(10, 99);
                 Player2Value = rnd.Next(10, 99);
             t = new Stopwatch();
@@ -33,19 +51,74 @@ namespace CoOpCalculator.Data
         {
             while (ingame)
             {
-                if (Player1Value * Player2Value == GoalValue)
+                if (t.Elapsed.Seconds - player1Live.Seconds > 10)
+                { 
+                    Player1DC();
+            }
+                if (t.Elapsed.Seconds - player2Live.Seconds > 10)
+                { 
+                    Player2DC();
+            }
+                switch (gamemode)
                 {
-                    success();
+                    case 1:
+                        if (Player1Value * Player2Value == GoalValue)
+                        {
+                            success();
+                        }
+                        break;
+                    case 2:
+                        if (Player1Value + Player2Value == GoalValue)
+                        {
+                            success();
+                        }
+                        break;
+                    case 3:
+                        if (Player1Value - Player2Value == GoalValue)
+                        {
+                            success();
+                        }
+                        if (Player2Value - Player1Value == GoalValue)
+                        {
+                            success();
+                        }
+                        break;
+                    case 4:
+                        if (Player1Value / Player2Value == GoalValue)
+                        {
+                            success();
+                        }
+                        if (Player2Value / Player1Value == GoalValue)
+                        {
+                            success();
+                        }
+                        break;
                 }
 
 
             }
         }
+        public string returnMessage = "";
+        private void Player2DC()
+        {
+            t.Stop();
+
+            returnMessage = "Other player disconnect detected";
+            ingame = false;
+        }
+
+        private void Player1DC()
+        {
+            t.Stop();
+
+            returnMessage = "Other player disconnect detected";
+            ingame = false;
+        }
 
         private void success()
         {
             t.Stop();
-
+            returnMessage = "Success took only";
             ingame = false;
         }
 
@@ -71,11 +144,13 @@ namespace CoOpCalculator.Data
             var Gc = new GameClient(this);
             if (id.Equals(player2ID))
             {
+                player2Live = t.Elapsed;
                 Gc.myValue = Player2Value;
                 Gc.otherValue = Player1Value;
             }
             if (id.Equals(player1ID))
             {
+                player1Live = t.Elapsed;
                 Gc.myValue = Player1Value;
                 Gc.otherValue = Player2Value;
             }
