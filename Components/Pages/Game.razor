@@ -304,8 +304,16 @@
 
     private void DeleteClick()
     {
-        newValueStr = newValueStr.Remove(newValueStr.Length);
-        newValue = int.Parse(newValueStr);
+        if(newValueStr.Length > 1)
+        {
+            newValueStr = newValueStr.Remove(newValueStr.Length - 1);
+            newValue = int.Parse(newValueStr);
+        }
+        else
+        {
+            newValueStr = "0";
+            newValue = 0;
+        }
         if (newValue > 9) { 
             gameServer.send(mymatcher.id, newValue);
         }
