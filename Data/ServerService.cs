@@ -8,16 +8,30 @@ namespace CoOpCalculator.Data
     public class ServerService : IServerService
     {
         private Dictionary<Byte[],GameServer> gameServers = new Dictionary<Byte[], GameServer>  ();
-        private List<Matcher> matchMaker, allmatchers;
+        private Dictionary<Matcher,int> matchMaker, allmatchers;
         public ServerService() {
-            matchMaker = new List<Matcher>();
-            allmatchers = new List<Matcher>();
+            matchMaker = new Dictionary<Matcher, int>();
+            allmatchers = new Dictionary<Matcher, int>();
         }
-
-        public Matcher StartMatchMake(Byte[] id)
+        public int queued
+        {
+            get
+            {
+                return matchMaker.Count;
+            }
+        }
+        public bool stopMatchMake(Matcher id)
+        {
+            var x = id.id;
+            id = getbyID(x);
+            matchMaker.Remove(id);
+            allmatchers.Remove(id);
+            return true;
+        }
+        public Matcher StartMatchMake(Byte[] id, int gm)
         {
             var x = new Matcher(id);
-            matchMaker.Add(x);
+            matchMaker.Add(x, gm);
             return x;
         }
         public bool checkMatchMake(Matcher id)
@@ -29,14 +43,14 @@ namespace CoOpCalculator.Data
         }
         private Matcher getbyID(Byte[] x)
         {
-            foreach(var r in allmatchers)
+            foreach(var r in allmatchers.Keys)
             {
                 if(r.id == x)
                 {
                     return r;
                 }
             }
-            foreach (var r in matchMaker)
+            foreach (var r in matchMaker.Keys)
             {
                 if (r.id == x)
                 {
@@ -45,30 +59,124 @@ namespace CoOpCalculator.Data
             }
             return null;
         }
+        public async void matchMake1(List<Matcher> Queue1)
+        {
 
+            Random rnd = new Random( );
+            for (int i = 0; i < Queue1.Count - 1; i += 2)
+            {
+                var x = Queue1[i];
+                var y = Queue1[i + 1];
+                var gs = new GameServer();
+                gs.player1ID = x.id;
+                gs.player2ID = y.id;
+                gameServers.Add(x.id, gs);
+                gameServers.Add(y.id, gs);
+                Queue1[i].gameServer = gs;
+                Queue1[i + 1].gameServer = gs;
+                Queue1[i].matched = true;
+                Queue1[i + 1].matched = true;
+                gs.start(1);
+                allmatchers.Add(Queue1[i], 1);
+                allmatchers.Add(Queue1[i + 1], 1);
+                matchMaker.Remove(Queue1[i]);
+                matchMaker.Remove(Queue1[i + 1]);
+            }
+        }
+        public async Task matchMake3(List<Matcher> Queue3)
+        {
+
+            Random rnd = new Random();
+            for (int i = 0; i < Queue3.Count - 1; i += 2)
+            {
+                var x = Queue3[i];
+                var y = Queue3[i + 1];
+                var gs = new GameServer();
+                gs.player1ID = x.id;
+                gs.player2ID = y.id;
+                gameServers.Add(x.id, gs);
+                gameServers.Add(y.id, gs);
+                Queue3[i].gameServer = gs;
+                Queue3[i + 1].gameServer = gs;
+                Queue3[i].matched = true;
+                Queue3[i + 1].matched = true;
+                gs.start(3);
+                allmatchers.Add(Queue3[i], 3);
+                allmatchers.Add(Queue3[i + 1], 3);
+                matchMaker.Remove(Queue3[i]);
+                matchMaker.Remove(Queue3[i + 1]);
+            }
+        }
+        public async Task matchMake2(List<Matcher> Queue2)
+        {
+
+            Random rnd = new Random();
+            for (int i = 0; i < Queue2.Count - 1; i += 2)
+            {
+                var x = Queue2[i];
+                var y = Queue2[i + 1];
+                var gs = new GameServer();
+                gs.player1ID = x.id;
+                gs.player2ID = y.id;
+                gameServers.Add(x.id, gs);
+                gameServers.Add(y.id, gs);
+                Queue2[i].gameServer = gs;
+                Queue2[i + 1].gameServer = gs;
+                Queue2[i].matched = true;
+                Queue2[i + 1].matched = true;
+                gs.start(2);
+                allmatchers.Add(Queue2[i], 1);
+                allmatchers.Add(Queue2[i + 1], 1);
+                matchMaker.Remove(Queue2[i]);
+                matchMaker.Remove(Queue2[i + 1]);
+            }
+        }
         public void matchMake() {
             if (matchMaker.Count >= 2) {
-                Random rnd = new Random();
-                for (int i=0; i<matchMaker.Count-1; i += 2)
+                List<Matcher> Queue1 = new List<Matcher>(), Queue2 = new List<Matcher>(), Queue3 = new List<Matcher>();
+                foreach(Matcher m in matchMaker.Keys)
                 {
-                    var x = matchMaker[i];
-                    var y = matchMaker[i+1];
-                    var gs = new GameServer();
-                    gs.player1ID = x.id;
-                    gs.player2ID = y.id;    
-                    gameServers.Add(x.id, gs);
-                    gameServers.Add(y.id, gs);
-                    matchMaker[i].gameServer = gs;
-                    matchMaker[i + 1].gameServer = gs;
-                    matchMaker[i].matched = true;
-                    matchMaker[i + 1].matched = true;
-                    gs.start();
-                } 
-            }
-            if(matchMaker.Count % 2 == 0)
-            {
-                allmatchers.AddRange(matchMaker);
-                matchMaker.Clear();
+                    switch (matchMaker.GetValueOrDefault(m)) { 
+                        case 1:
+                            Queue1.Add(m);
+                        break;
+
+                    case 2:
+                            Queue2.Add(m);  
+                        break;
+                    case 3:
+                            Queue3.Add(m);
+                        break;
+                    case 4:
+                            if (Queue1.Count % 2 == 1)
+                            {
+                                Queue1.Add(m);
+                            }
+                            else
+                            {
+                                if (Queue2.Count % 2 == 1)
+                                {
+                                    Queue2.Add(m);
+                                }
+                                else
+                                {
+                                    if (Queue3.Count % 2 == 1)
+                                    {
+                                        Queue3.Add(m);
+                                    }
+                                    else
+                                    {
+                                        Queue1.Add(m);
+                                    }
+                                }
+                            }
+                            break;
+                    }
+                    }
+                gameServers.Clear();
+                matchMake1(Queue1);
+                matchMake2(Queue2);
+                matchMake3(Queue3);
             }
         }
     }
