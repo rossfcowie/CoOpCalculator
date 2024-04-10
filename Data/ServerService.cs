@@ -191,6 +191,11 @@ namespace CoOpCalculator.Data
                             {
                                 Queue3.Add(m);
                             }
+                            else
+                            {
+                                Queue1.Add(m);
+
+                            }
                         }
                     }
                 }
