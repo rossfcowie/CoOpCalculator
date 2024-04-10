@@ -1,6 +1,7 @@
-﻿@page "/counter"
+﻿@page "/game"
 
 @using Data
+@using System.Diagnostics
 
 @inject ServerService ss;
 
@@ -10,28 +11,71 @@
 {
     @if (gameServer.ingame)
     {
-        <h1>@gameClient!.myserver.GoalValue</h1>
+        {        gamemode = gameServer.gamemode;    }
+        <div class="Game">
+            <div style="height:@(myDynamicHeightInPixels)%;" class="fakebg"></div>
+        <h1 class="Goal" style=" border-bottom: solid black 1px">@gameClient!.myserver.GoalValue</h1>
+        @switch (gamemode)
+        {
+            case 1:
+            <div class="Sum">
+                    <table >
+                        <th></th>
+                        <th></th>
+                    <tr><td></td> <td > @gameClient!.otherValue</td></tr>
+                    <tr> <td>*</td><td>@newValue</td></tr>
+                        <tr style=" border-top: solid black 1px"><td>=</td><td>@(gameClient!.otherValue * newValue)</td></tr>
+                    </table>
+                </div>
+            break;
+            case 2:
+                    <div class="Sum">
+                        <table>
+                            <th></th>
+                            <th></th>
+                            <tr><td></td> <td> @gameClient!.otherValue</td></tr>
+                            <tr> <td>+</td><td>@newValue</td></tr>
+                            <tr style=" border-top: solid black 1px"><td>=</td><td>@(gameClient!.otherValue + newValue)</td></tr>
+                        </table>
+                    </div>
+            break;
+                case 3:
+                    <div class="Sum">
+                        <table>
+                            <th></th>
+                            <th></th>
+                            @if (gameClient!.otherValue>newValue){
+                            <tr><td></td> <td> @gameClient!.otherValue</td></tr>
+                            <tr> <td>-</td><td>@newValue</td></tr>
+                            }else{
+                                <tr><td></td><td>@newValue</td></tr>
+                                <tr><td>-</td><td > @gameClient!.otherValue</td></tr>
+                            }
+                            <tr style=" border-top: solid black 1px"><td>=</td><td>@Math.Abs(gameClient!.otherValue - newValue)</td></tr>
+                        </table>
+                    </div>
+            break;
+        }
+        @if (newValue < 10)
+        {
 
-        <h2>@(gameClient!.otherValue * newValue)</h2>
-        <p>@gameClient!.otherValue</p>
-        <p>
-            @newValue
-        </p>
+            <h2>The minimum number allowed is 10</h2>
+        }
         <div class="row">
-            <div class="col-2">
+            <div class="col-4">
                 @if (recomendvalue().Equals("Delete"))
                 {
-                    <button  style="width:-webkit-fill-available; Background-Color:lightyellow; color:black" class="btn btn-primary" @onclick="DeleteClick">Delete</button>
+                        <button style="width:-webkit-fill-available; Background-Color:lightyellow; color:black" class="btn btn-primary" @onclick="DeleteClick"> &lt </button>
 
                 }
                 else
                 {
-                    <button style="width:-webkit-fill-available;" class="btn btn-primary" @onclick="DeleteClick">Delete</button>
+                        <button style="width:-webkit-fill-available;" class="btn btn-primary" @onclick="DeleteClick">&lt</button>
 
                 }
 
             </div>
-            <div class="col-2">
+            <div class="col-4">
                 @if (recomendvalue().Equals("0"))
                 {
                     <button  style="width:-webkit-fill-available; Background-Color:lightyellow; color:black" class="btn btn-primary" @onclick="() => Clicked(0)">0</button>
@@ -43,7 +87,7 @@
 
                 }
             </div>
-            <div class="col-2">
+            <div class="col-4">
                 @if (recomendvalue().Equals("CE"))
                 {
                     <button  style="width:-webkit-fill-available; Background-Color:lightyellow; color:black" class="btn btn-primary" @onclick="CEclick">CE</button>
@@ -57,9 +101,8 @@
 
             </div>
         </div>
-
         <div class="row">
-            <div class="col-2">
+            <div class="col-4">
                 @if (recomendvalue().Equals("1"))
                 {
                     <button style="width:-webkit-fill-available; Background-Color:lightyellow; color:black" class="btn btn-primary" @onclick="() => Clicked(1)">1</button>
@@ -72,7 +115,7 @@
                 }
 
             </div>
-            <div class="col-2">
+            <div class="col-4">
                 @if (recomendvalue().Equals("2"))
                 {
                     <button  style="width:-webkit-fill-available; Background-Color:lightyellow; color:black" class="btn btn-primary" @onclick="() => Clicked(2)">2</button>
@@ -85,7 +128,7 @@
                 }
 
             </div>
-            <div class="col-2">
+            <div class="col-4">
 
                 @if (recomendvalue().Equals("3"))
                 {
@@ -99,9 +142,8 @@
                 }
             </div>
         </div>
-
         <div class="row">
-            <div class="col-2">
+            <div class="col-4">
                 @if (recomendvalue().Equals("4"))
                 {
                     <button  style="width:-webkit-fill-available; Background-Color:lightyellow; color:black" class="btn btn-primary" @onclick="() => Clicked(4)">4</button>
@@ -114,7 +156,7 @@
                 }
 
             </div>
-            <div class="col-2">
+            <div class="col-4">
                 @if (recomendvalue().Equals("5"))
                 {
                     <button  style="width:-webkit-fill-available; Background-Color:lightyellow; color:black" class="btn btn-primary" @onclick="() => Clicked(5)">5</button>
@@ -126,7 +168,7 @@
 
                 }
             </div>
-            <div class="col-2">
+            <div class="col-4">
 
                 @if (recomendvalue().Equals("6"))
                 {
@@ -141,7 +183,7 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-2">
+            <div class="col-4">
                 @if (recomendvalue().Equals("7"))
                 {
                     <button  style="width:-webkit-fill-available; Background-Color:lightyellow; color:black" class="btn btn-primary" @onclick="() => Clicked(7)">7</button>
@@ -154,7 +196,7 @@
                 }
 
             </div>
-            <div class="col-2">
+            <div class="col-4">
                 @if (recomendvalue().Equals("8"))
                 {
                     <button  style="width:-webkit-fill-available; Background-Color:lightyellow; color:black" class="btn btn-primary" @onclick="() => Clicked(8)">8</button>
@@ -166,7 +208,7 @@
 
                 }
             </div>
-            <div class="col-2">
+            <div class="col-4">
                 @if (recomendvalue().Equals("9"))
                 {
                     <button  style="width:-webkit-fill-available; Background-Color:lightyellow; color:black" class="btn btn-primary" @onclick="() => Clicked(9)">9</button>
@@ -179,19 +221,40 @@
                 }
             </div>
         </div>
-    }
+    </div>
+}
     else
     {
-        <p>Success took only @gameServer.t.Elapsed</p>
+        <p>@gameServer.returnMessage @gameServer.t.Elapsed</p>
         <button style="width:-webkit-fill-available;" class="btn btn-primary" @onclick="Play">Play</button>
     }
     }
     else
     {
+    <InputSelect @bind-Value="gamemode">
+        <option  value="1">Multiply</option>
+        <option value="2">Add</option>
+        <option value="3">Subtract</option>
+        <option value="4">Any</option>
+    </InputSelect>
+        <p>@ss.queued People in the queue</p>
         <button style="width:-webkit-fill-available;" class="btn btn-primary" @onclick="Play">Play</button>
+    @if (t.IsRunning)
+    {
+        <p>In Queue</p>
+        <p>@t.Elapsed.Seconds</p>
+        <button style="width:-webkit-fill-available;" class="btn btn-primary" @onclick="StopMatching">Stop</button>
     }
-   
+    }
 @code {
+    private double myDynamicHeightInPixels {
+        get{
+            return Math.Min(100,((gameServer.t.Elapsed / TimeSpan.FromSeconds(30)) * 100));
+        }
+    }
+
+
+    public int gamemode = 4;
     private GameServer gameServer {
         get
         {
@@ -274,7 +337,8 @@
         if(mymatcher is null){
 
             Byte[] x = GetByteArray();
-            mymatcher = ss.StartMatchMake(x);
+            mymatcher = ss.StartMatchMake(x,gamemode);
+            t.Start();
         }
         else
         {
@@ -283,7 +347,8 @@
                 if (!gameServer.ingame)
                 {
                     Byte[] x = GetByteArray();
-                    mymatcher = ss.StartMatchMake(x);
+                    mymatcher = ss.StartMatchMake(x, gamemode);
+                    t.Start();
 
                 }
             }
@@ -299,7 +364,7 @@
         return byteArray;
     }
     private Timer timer;
-
+    private Stopwatch t = new Stopwatch();
     protected override void OnInitialized()
     {
         // Set up the timer to tick every second
@@ -323,26 +388,33 @@
     {
         if (gameServer is not null)
         {
-            
-        if (gameServer.t.Elapsed > TimeSpan.FromSeconds(30))
-        {
-            var x = newValue.ToString();
-            var y = calculateRecomended().ToString();
-            if (y.StartsWith(x))
+
+            if (gameServer.t.Elapsed > TimeSpan.FromSeconds(30))
             {
-                if (y.Length > x.Length)
+                var x = newValue.ToString();
+                var y = calculateRecomended().ToString();
+                if (y.StartsWith(x))
                 {
-                    return y[x.Length].ToString();
+                    if (y.Length > x.Length)
+                    {
+                        return y[x.Length].ToString();
+                    }
                 }
-            }
-            if (newValue == 0)
-            {
+                if (newValue == 0)
+                {
                     return y[0].ToString();
                 }
                 return "CE";
 
-        }
+            }
         }
         return "";
+    }
+    private void StopMatching(MouseEventArgs e)
+    {
+        ss.stopMatchMake(mymatcher);
+        mymatcher = null;
+        t.Restart();
+        t.Stop();
     }
 }
