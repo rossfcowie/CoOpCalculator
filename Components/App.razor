@@ -19,11 +19,17 @@
     <script src="_framework/blazor.web.js"></script>
 </body>
 
+
 </html>
 
 @code {
     [CascadingParameter]
     private HttpContext HttpContext { get; set; } = default!;
+
+    [CascadingParameter]
+    private Task<AuthenticationState>? authenticationState { get; set; }
+
+
 
     private IComponentRenderMode? RenderModeForPage => HttpContext.Request.Path.StartsWithSegments("/Account")
         ? null

@@ -1,0 +1,66 @@
+﻿@page "/collection"
+
+@using Data
+@using System.Diagnostics
+@using System;
+@using System.Text.Json;
+@using Microsoft.JSInterop;
+@using CoOpCalculator.Components.Pages.CollectionView;
+@inject ServerService ss;
+@inject IJSRuntime JSRuntime
+
+<h3>Collection</h3>
+@if (myCollection is not null)
+{
+    int z = 9;
+    
+    <div class="row">
+@foreach (string m in myCollection)
+{
+            z++;    
+            <div style="border: solid black 1px; margin:1px" class="col-3">
+        <Card i="@z" level="@m"></Card><br/>
+  </div>
+}
+    </div>
+}
+@code {
+    private List<string> myCollection { get; set; } = new List<string>();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        try
+        {
+            // Check if the byte array exists in local storage
+            var myStats = await JSRuntime.InvokeAsync<Stats>("localStorage.getItem", "myStats");
+            if (myStats is not null)
+            {
+                // Retrieve the byte array from local storage
+                myCollection = myStats.collection;
+            }
+            else
+            {
+                // Generate a new byte array
+                 myStats = new Stats();
+
+                // Save the byte array to local storage
+                await JSRuntime.InvokeVoidAsync("localStorage.setItem", "myStats", myStats);
+
+                myCollection = myStats.collection;
+            }
+        }
+        catch (Exception ex)
+        {
+            // Handle any exceptions (e.g., when local storage is disabled or unavailable)
+            // You can log the exception or take appropriate action
+            Console.WriteLine($"Error accessing local storage: {ex.Message}");  // Generate a new byte array
+            var myStats = new Stats();
+
+            // Save the byte array to local storage
+            await JSRuntime.InvokeVoidAsync("localStorage.setItem", "myStats", myStats);
+
+            myCollection = myStats.collection;
+        }
+        InvokeAsync(StateHasChanged);
+    }
+}

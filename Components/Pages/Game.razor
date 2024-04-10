@@ -2,9 +2,12 @@
 
 @using Data
 @using System.Diagnostics
+@using System;
+@using System.Text.Json;
+@using Microsoft.JSInterop;
 
 @inject ServerService ss;
-
+@inject IJSRuntime JSRuntime
 <PageTitle>Game</PageTitle>
 
     @if(gameClient != null)
@@ -297,7 +300,6 @@
         set { } 
     }
 
-    private ApplicationUser myAccount;
     private int newValue = 10;
     private string newValueStr = "10";
     private Matcher mymatcher;
@@ -340,11 +342,11 @@
         }
         return new EventCallback();
     }
-    private void Play()
+    private async Task Play()
     {
         if(mymatcher is null){
 
-            Byte[] x = GetByteArray();
+            Byte[] x = await GetByteArrayAsync();
             mymatcher = ss.StartMatchMake(x,gamemode);
             t.Start();
         }
@@ -354,7 +356,7 @@
             {
                 if (!gameServer.ingame)
                 {
-                    Byte[] x = GetByteArray();
+                    Byte[] x = await GetByteArrayAsync();
                     mymatcher = ss.StartMatchMake(x, gamemode);
                     t.Start();
 
@@ -364,12 +366,40 @@
         ss.checkMatchMake(mymatcher);
 
     }
-    private byte[] GetByteArray()
+
+
+
+    private async Task<byte[]> GetByteArrayAsync()
     {
-        Random rnd = new Random();
-        byte[] byteArray = new byte[32]; // Convert KB to bytes
-        rnd.NextBytes(byteArray);
-        return byteArray;
+        try
+        {
+            // Check if the byte array exists in local storage
+             var base64Encoded = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "my_byte_array");
+            if (!string.IsNullOrEmpty(base64Encoded))
+            {
+                Console.WriteLine("base64Encoded");
+                // Retrieve the byte array from local storage
+                return Convert.FromBase64String(base64Encoded);
+            }
+            else
+            {
+                // Generate a new byte array
+                var randomBytes = new byte[32];
+                new Random().NextBytes(randomBytes);
+
+                // Save the byte array to local storage
+                await JSRuntime.InvokeVoidAsync("localStorage.setItem", "my_byte_array", Convert.ToBase64String(randomBytes));
+
+                return randomBytes;
+            }
+        }
+        catch (Exception ex)
+        {
+            // Handle any exceptions (e.g., when local storage is disabled or unavailable)
+            // You can log the exception or take appropriate action
+            Console.WriteLine($"Error accessing local storage: {ex.Message}");
+            return null; // Return null or handle the error as needed
+        }
     }
     private Timer timer;
     private Stopwatch t = new Stopwatch();
