@@ -133,7 +133,7 @@ namespace CoOpCalculator.Data
         }
         public void matchMake() {
             if (matchMaker.Count >= 2) {
-                List<Matcher> Queue1 = new List<Matcher>(), Queue2 = new List<Matcher>(), Queue3 = new List<Matcher>();
+                List<Matcher> Queue1 = new List<Matcher>(), Queue2 = new List<Matcher>(), Queue3 = new List<Matcher>(), Queue4 = new List<Matcher>();
                 foreach(Matcher m in matchMaker.Keys)
                 {
                     switch (matchMaker.GetValueOrDefault(m)) { 
@@ -166,13 +166,34 @@ namespace CoOpCalculator.Data
                                     }
                                     else
                                     {
-                                        Queue1.Add(m);
+                                        Queue4.Add(m);
                                     }
                                 }
                             }
                             break;
                     }
                     }
+                foreach(Matcher m in Queue4)
+                {
+                    if (Queue1.Count % 2 == 1)
+                    {
+                        Queue1.Add(m);
+                    }
+                    else
+                    {
+                        if (Queue2.Count % 2 == 1)
+                        {
+                            Queue2.Add(m);
+                        }
+                        else
+                        {
+                            if (Queue3.Count % 2 == 1)
+                            {
+                                Queue3.Add(m);
+                            }
+                        }
+                    }
+                }
                 gameServers.Clear();
                 matchMake1(Queue1);
                 matchMake2(Queue2);
