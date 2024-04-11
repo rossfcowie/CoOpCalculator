@@ -14,53 +14,84 @@
 {
     int z = 9;
     
-    <div class="row">
-@foreach (string m in myCollection)
+    <div style="gutter" class="row">
+@foreach (byte m in myCollection)
 {
-            z++;    
-            <div style="border: solid black 1px; margin:1px" class="col-3">
-        <Card i="@z" level="@m"></Card><br/>
-  </div>
+            z++;
+            int i = z;
+            <div style="width:fit-content" class="col-2">
+        <Card i="@z" level="@m" ></Card><br/>
+        </div>
 }
     </div>
 }
 @code {
-    private List<string> myCollection { get; set; } = new List<string>();
+    private byte[] myCollection { get; set; } = new byte[90];
+    private EventCallback generateCard(int z)
+    {
+        var tempStats = new Stats();
+        tempStats.collection = myCollection;
+        if (tempStats is not null)
+        {
+            tempStats.getStar(z, "M");
+            tempStats.getStar(z, "L");
+            tempStats.getStar(z, "R");
+            tempStats.getCard(z, "B");
+            tempStats.getCard(z, "S");
+            tempStats.getCard(z, "G");
+            myCollection = tempStats.collection;
+        }
+        save();
+        return new EventCallback();
+
+
+    }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        myCollection = await GetByteArrayAsync();
+        InvokeAsync(StateHasChanged);
+    }
+    private async Task save()
+    {
+        // Generate a new byte array
+        var randomBytes = myCollection;
+
+        // Save the byte array to local storage
+        await JSRuntime.InvokeVoidAsync("localStorage.setItem", "myStats", Convert.ToBase64String(randomBytes));
+
+        myCollection =  randomBytes;
+        
+    }
+    private async Task<Byte[]> GetByteArrayAsync()
     {
         try
         {
             // Check if the byte array exists in local storage
-            var myStats = await JSRuntime.InvokeAsync<Stats>("localStorage.getItem", "myStats");
-            if (myStats is not null)
+            var base64Encoded = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "myStats");
+            if (!string.IsNullOrEmpty(base64Encoded))
             {
                 // Retrieve the byte array from local storage
-                myCollection = myStats.collection;
+                return Convert.FromBase64String(base64Encoded);
             }
             else
             {
                 // Generate a new byte array
-                 myStats = new Stats();
+                var randomBytes = myCollection;
 
                 // Save the byte array to local storage
-                await JSRuntime.InvokeVoidAsync("localStorage.setItem", "myStats", myStats);
+                await JSRuntime.InvokeVoidAsync("localStorage.setItem", "myStats", Convert.ToBase64String(randomBytes));
 
-                myCollection = myStats.collection;
+                return randomBytes;
             }
         }
         catch (Exception ex)
         {
             // Handle any exceptions (e.g., when local storage is disabled or unavailable)
             // You can log the exception or take appropriate action
-            Console.WriteLine($"Error accessing local storage: {ex.Message}");  // Generate a new byte array
-            var myStats = new Stats();
-
-            // Save the byte array to local storage
-            await JSRuntime.InvokeVoidAsync("localStorage.setItem", "myStats", myStats);
-
-            myCollection = myStats.collection;
+            return null; // Return null or handle the error as needed
         }
-        InvokeAsync(StateHasChanged);
     }
+
+
 }

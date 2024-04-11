@@ -369,7 +369,7 @@
 
 
 
-    private async Task<byte[]> GetByteArrayAsync()
+    private async Task<Byte[]> GetByteArrayAsync()
     {
         try
         {
@@ -384,7 +384,7 @@
             else
             {
                 // Generate a new byte array
-                var randomBytes = new byte[32];
+                var randomBytes = new Byte[32];
                 new Random().NextBytes(randomBytes);
 
                 // Save the byte array to local storage

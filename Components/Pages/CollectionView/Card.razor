@@ -1,37 +1,148 @@
 ﻿@using CoOpCalculator.Components.Pages.CollectionView;
-<div>
-    <h1>@i</h1>
-    <div class="row">
-        <div class="col-4">
-    @if(level.Contains("Add")){
-        <FilledStar/>
-    }else{
-        <EmptyStar/>
-    }
-    </div>
-        <div class="col-4">
-    @if (level.Contains("Mul"))
-    {
-        <FilledStar/>
-    }else{
-        <EmptyStar/>
-        }
-    </div>
-        <div class="col-4">
-    @if (level.Contains("Sub"))
-    {
-        <FilledStar/>
-    }else{
-        <EmptyStar/>
-    }
-</div>
-    </div>
-</div>
+<div style="
+    Height: 155px;
+    width: 111px;
+    position:inherit;background-image:url(@BGImageSource)">
+    <div style="
+    Height: 155px;
+    width: 111px;
+    position:inherit;
+background-image:url(Resources/Cards/CardBase.png)">
+        <div style="
+    Height: 155px;
+    width: 111px;
+    position:inherit;background-image:url(@NumberImageSource)">
+        @if(level>0){
 
-@code {
-    [Parameter]
-    public string level { get; set; }
-    [Parameter]
-    public int i { get; set; }
+        @switch(level%7)
+            {
+        case 1:
+            <div style="
+    Height: 155px;
+    width: 111px;
+    position:inherit;background-image:url(Resources/Cards/LStar.png)"></div>
+                break;
+        case 2:
+            <div style="
+    Height: 155px;
+    width: 111px;
+    position:inherit;background-image:url;(Resources/Cards/RStar.png)"></div>
+                break;
+        case 3:
+            <div style="
+    Height: 155px;
+    width: 111px;
+    position:inherit;background-image:url(Resources/Cards/MStar.png)"></div>
+                break;
+        case 4:
+        <div style="
+    Height: 155px;
+    width: 111px;
+    position:inherit;background-image:url;(Resources/Cards/RStar.png)" >
+        <div style="
+    Height: 155px;
+    width: 111px;
+    position:inherit;background-image:url(Resources/Cards/LStar.png)"></div></div>
+            break;
+        case 5:
+            <div style="
+    Height: 155px;
+    width: 111px;
+    position:inherit;background-image:url;(Resources/Cards/RStar.png)" >
+            <div style="
+    Height: 155px;
+    width: 111px;
+    position:inherit;background-image:url(Resources/Cards/MStar.png)"></div>
+                </div>
+            break;
+        case 6:
+        <div style="
+    Height: 155px;
+    width: 111px;
+    position:inherit;background-image:url(Resources/Cards/MStar.png)" >
+        <div style="
+    Height: 155px;
+    width: 111px;
+    position:inherit;background-image:url(Resources/Cards/LStar.png)"></div>
+                </div>
+            break;
+        case 0:
+            <div style="
+    Height: 155px;
+    width: 111px;
+    position:inherit;background-image:url(Resources/Cards/RStar.png)" >
+            <div style="
+    Height: 155px;
+    width: 111px;
+    position:inherit;background-image:url(Resources/Cards/MStar.png)" >
+            <div style="
+    Height: 155px;
+    width: 111px;
+    position:inherit;background-image:url(Resources/Cards/LStar.png)"></div>
+                    </div>
+                </div>
+            break;
+            default:
+                break;
+        }
+            }
+        </div>
+    </div>
+    </div>
+    @code {
+        [Parameter]
+        public byte level { get; set; }
+        [Parameter]
+        public int i { get; set; }
+        private string getCardback()
+        {
+            switch (level)
+            {
+                case <= 0:
+                    return "WcardBack";
+                    break;
+                case > 0 and <= 7:
+                    return "BcardBack";
+                    break;
+                case > 7 and <= 14:
+                    return "ScardBack";
+                    break;
+                case > 14 and <= 21:
+                    return "BScardBack";
+                    break;
+                case > 21 and <= 28:
+                    return "BGcardBack";
+                    break;
+                case > 28 and <= 35:
+                    return "GcardBack";
+                    break;
+                case > 35 and <= 42:
+                    return "GScardBack";
+                    break;
+                case > 42 and <= 49:
+                    return "PcardBack";
+                    break;
+                default:
+                    return "WcardBack";
+                    break;
+            }
+
+        }
+        protected override void OnParametersSet()
+        {
+            getImages();
+            getImages();
+        }
+
+    private string BGImageSource = "";
+    private void getImages()
+    {
+        string id = getCardback();
+            BGImageSource = $"Resources/Cards/{id}.png";
+            NumberImageSource = $"Resources/Cards/Nums/{i}.png";
+    }
+
+
+    private string? NumberImageSource;
 
 }
