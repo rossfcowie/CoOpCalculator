@@ -54,6 +54,10 @@
         }
         public string getCardStars(byte i)
         {
+            if (i == 0)
+            {
+                return "";
+            }
             switch (i%7)
             {
                 case 1:
@@ -99,18 +103,19 @@
             }
             return 0;
         }
-
-        public Boolean getCard(int i, string level)
+        public Boolean getCardStar(int i, string level, string gm)
         {
             byte b = (byte)collection.GetValue(i - 10);
             string c = getCardBacks(b);
             string s = getCardStars(b);
+            Boolean isitnew = true;
             if (c.Contains(level))
             {
-                return false;
+                isitnew = false;
             }
             else
             {
+                isitnew = true;
                 if (level.Equals("B"))
                 {
                     c = "B" + c;
@@ -143,57 +148,54 @@
                 {
                     c = "BGS";
                 }
-                collection.SetValue((byte)(getCardBacks(c) + getCardStars(s)), i-10);
-                return true;
-            }
-        }
 
-        public Boolean getStar(int i, string gm)
-        {
-            byte b = (byte)collection.GetValue(i-10);
-            string s = getCardBacks(b);
-            string c = getCardStars(b);
-            if (c.Contains(gm))
+            }
+            if (s.Contains(gm))
             {
-                return false;
             }
             else
             {
+                isitnew = true;
                 if (gm.Equals("R"))
                 {
-                    c = "R" + c;
+                    s = "R" + s;
                 }
                 if (gm.Equals("M"))
                 {
-                    if ( c.Contains("R"))
-                {
-                    c = c + "M";
-                }
-                else
-                {
-
-                    if (c.Contains("L"))
+                    if (s.Contains("R"))
                     {
-                        c = "M" + c;
+                        s = s + "M";
                     }
                     else
                     {
-                            c = "M" + c;
+
+                        if (s.Contains("L"))
+                        {
+                            s = "M" + s;
+                        }
+                        else
+                        {
+                            s = "M" + s;
                         }
 
                     }
                 }
                 if (gm.Equals("L"))
                 {
-                    c = c + "L";
+                    s = s + "L";
                 }
-                if (c.Length >= 3)
+                if (s.Length >= 3)
                 {
-                    c = "RML";
+                    s = "RML";
                 }
-                collection.SetValue((byte)(getCardBacks(s) + getCardStars(c)), i - 10);
-                return true;
             }
+        
+            if (isitnew)
+            {
+                collection.SetValue((byte)(getCardBacks(c) + getCardStars(s)), i - 10);
+
+            }
+            return isitnew;
         }
     }
 }

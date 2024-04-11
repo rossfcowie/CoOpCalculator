@@ -1,38 +1,54 @@
-﻿@page "/collection"
-
-@using Data
+﻿@using Data
 @using System.Diagnostics
 @using System;
 @using System.Text.Json;
 @using Microsoft.JSInterop;
 @using CoOpCalculator.Components.Pages.CollectionView;
-@inject ServerService ss;
 @inject IJSRuntime JSRuntime
+    @if(showWindow){
 
-<h3>Collection</h3>
-@if (myCollection is not null)
-{
-    int z = 9;
-    
-    <div style="gutter" class="row">
-@foreach (byte m in myCollection)
-{
-            z++;
-            int i = z;
-            <div style="width:fit-content" class="col-2">
-        <Card i="@z" level="@m" ></Card><br/>
+    <div class="overlay" @onclick="CloseWindow">
+    <div class="modal-window">
+        <Card i="@myNum" level="@getCard()"></Card>
         </div>
-}
     </div>
 }
-@code {
-    private byte[] myCollection { get; set; } = new byte[90];
-    
 
+@code {
+    [Parameter] public int myNum { get; set; }
+    [Parameter] public string myGM { get; set; }
+    [Parameter] public string myRank { get; set; }
+
+    private byte[] myCollection { get; set; } = new byte[90];
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+
         myCollection = await GetByteArrayAsync();
+        ShowWindow();
         InvokeAsync(StateHasChanged);
+    }
+
+    private byte getCard()
+    {
+        return myCollection[myNum - 10];
+    }
+    private void ShowWindow()
+    {
+        if (!showWindow)
+        {
+            Stats s = new Stats();
+            s.collection = myCollection;
+            showWindow = s.getCardStar(myNum, myRank, myGM);
+            save();
+            
+        }
+    }
+
+
+    private void CloseWindow()
+    {
+        showWindow = false;
+
     }
     private async Task save()
     {
@@ -42,8 +58,8 @@
         // Save the byte array to local storage
         await JSRuntime.InvokeVoidAsync("localStorage.setItem", "myStats", Convert.ToBase64String(randomBytes));
 
-        myCollection =  randomBytes;
-        
+        myCollection = randomBytes;
+
     }
     private async Task<Byte[]> GetByteArrayAsync()
     {
@@ -74,6 +90,6 @@
             return null; // Return null or handle the error as needed
         }
     }
-
+    private bool showWindow = false;
 
 }

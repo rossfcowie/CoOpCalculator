@@ -36,9 +36,6 @@ namespace CoOpCalculator.Data
                 case 3:
                     GoalValue = rnd.Next(10, 99) - rnd.Next(10, 99);
                     break;
-                case 4:
-                    GoalValue = rnd.Next(10, 99) / rnd.Next(10, 99);
-                    break;
             }
             Player1Value = rnd.Next(10, 99);
                 Player2Value = rnd.Next(10, 99);
@@ -118,10 +115,31 @@ namespace CoOpCalculator.Data
         private void success()
         {
             t.Stop();
-            returnMessage = "Success took only";
+            prize = genPrize();
+            returnMessage = $"You got a {prize} Card!  Time:";
             ingame = false;
         }
+        public string prize;
+        private string genPrize()
+        {
+            Random rnd = new Random();
+            var x = rnd.Next(1, 100 * Math.Min(gamemode, 2)) * Math.Min(gamemode, 2);
+            var g = (50 - t.Elapsed.Seconds);
+            var s = (80 - t.Elapsed.Seconds);
 
+            if (x<= g)
+            {
+
+                return "G";
+            }
+            if (x <= s)
+            {
+
+                return "S";
+            }
+
+                    return "B";
+        }
         public GameServer() { 
         
         }

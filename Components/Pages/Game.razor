@@ -224,10 +224,15 @@
                 }
             </div>
         </div>
-    </div>
-}
+        </div>
+    }
     else
     {
+        @if (@gameServer.returnMessage.Contains("You got a"))
+        {
+            <CoOpCalculator.Components.Pages.CollectionView.CardUnlockComponent myNum="@gameClient.myValue" myGM="@gmStr()" myRank="@gameServer.prize" />
+
+        }
         <p>@gameServer.returnMessage @gameServer.t.Elapsed</p>
         <button style="width:-webkit-fill-available;" class="btn btn-primary" @onclick="Play">Play</button>
     }
@@ -250,6 +255,22 @@
     }
     }
 @code {
+    private string gmStr()
+    {
+        var x = gameClient.myserver.gamemode;
+        switch (x)
+        {
+            case 1:
+                return "M";
+            case 2:
+                return "R";
+            case 3:
+                return "L";
+        }
+        return "M";
+    }
+
+
     private double myDynamicHeightInPixels {
         get{
             return Math.Min(100,((gameServer.t.Elapsed / TimeSpan.FromSeconds(30)) * 100));
