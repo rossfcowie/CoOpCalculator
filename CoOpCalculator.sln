@@ -20,7 +20,6 @@ Global
 		{05EB4586-B20F-44AA-84B8-9ED586FEF7A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{05EB4586-B20F-44AA-84B8-9ED586FEF7A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{05EB4586-B20F-44AA-84B8-9ED586FEF7A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{05EB4586-B20F-44AA-84B8-9ED586FEF7A2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
