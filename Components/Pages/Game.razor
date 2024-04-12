@@ -257,6 +257,8 @@
 @code {
     private string gmStr()
     {
+        t.Restart();
+        t.Stop();
         var x = gameClient.myserver.gamemode;
         switch (x)
         {
@@ -284,7 +286,7 @@
         {
             if(mymatcher is not null)
             {
-                if (ss.checkMatchMake(mymatcher))
+                if (ss.checkMatchMake(mymatcher,t.Elapsed))
                 {
                     return mymatcher.gameServer;
                 }
@@ -384,7 +386,7 @@
                 }
             }
         }
-        ss.checkMatchMake(mymatcher);
+        ss.checkMatchMake(mymatcher, t.Elapsed);
 
     }
 

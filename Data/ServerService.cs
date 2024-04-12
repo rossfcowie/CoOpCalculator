@@ -34,6 +34,21 @@ namespace CoOpCalculator.Data
             matchMaker.Add(x, gm);
             return x;
         }
+        public bool checkMatchMake(Matcher id, TimeSpan t)
+        {
+            matchMake();
+            var x = id.id;
+            id = getbyID(x);
+            if (id.matched || t.Seconds < 10) { 
+            return id.matched;
+            }
+            else
+            {
+                AImatchMake();
+                id = getbyID(x);
+                return id.matched;
+            }
+        }
         public bool checkMatchMake(Matcher id)
         {
             matchMake();
@@ -131,6 +146,29 @@ namespace CoOpCalculator.Data
                 matchMaker.Remove(Queue2[i + 1]);
             }
         }
+        public void AImatchMake()
+        {
+            List<Matcher> Queue1 = new List<Matcher>(), Queue2 = new List<Matcher>(), Queue3 = new List<Matcher>();
+            foreach (Matcher m in matchMaker.Keys)
+            {
+                var x = matchMaker.GetValueOrDefault(m);
+                Random rnd = new Random();
+                if (x == 4)
+                {
+                    x = rnd.Next(1, 3);
+                }
+                            var gs = new AIGameServer();
+                            gs.player1ID = m.id;
+                            gameServers.Add(m.id, gs);
+                            m.gameServer = gs;
+                            m.matched = true;
+                            gs.start(x);
+                            allmatchers.Add(m, x);
+                            matchMaker.Remove(m);
+                }
+            }
+        
+
         public void matchMake() {
             if (matchMaker.Count >= 2) {
                 List<Matcher> Queue1 = new List<Matcher>(), Queue2 = new List<Matcher>(), Queue3 = new List<Matcher>(), Queue4 = new List<Matcher>();
@@ -206,6 +244,8 @@ namespace CoOpCalculator.Data
             }
         }
     }
+
+
     public class Matcher(Byte[] id)
     {
         public Byte[] id = id;

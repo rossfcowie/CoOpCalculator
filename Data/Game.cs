@@ -6,6 +6,89 @@ using System.Diagnostics;
 
 namespace CoOpCalculator.Data
 {
+    public class AIGameServer : GameServer
+    {
+        private int mytarget = 10;
+        Random rnd;
+        public void start(int gm)
+        {
+            gamemode = gm; 
+            rnd = new Random();
+            mytarget = rnd.Next(10, 99);
+            switch (gamemode)
+            {
+                case 1:
+                    GoalValue = rnd.Next(10, 99) * mytarget;
+                    break;
+                case 2:
+                    GoalValue = rnd.Next(10, 99) + mytarget;
+                    break;
+                case 3:
+                    GoalValue = rnd.Next(10, 99) - mytarget;
+                    break;
+            }
+            Player1Value = rnd.Next(10, 99);
+            Player2Value = rnd.Next(10, 99);
+            t = new Stopwatch();
+            t.Start();
+            ingame = true;
+            ThreadPool.QueueUserWorkItem(tick);
+        }
+        public void tick(object state)
+        {
+            while (ingame)
+            {
+                if (t.Elapsed.Seconds - player1Live.Seconds > 10)
+                {
+                    Player1DC();
+                }
+                if (t.Elapsed.Seconds - player2Live.Seconds > 8)
+                {
+                    var min = Math.Max(10, mytarget - Math.Min(0,(30 - t.Elapsed.Seconds)));
+                    var max = Math.Min(99, mytarget + Math.Min(0,(30 - t.Elapsed.Seconds)));
+                    Player2Value = rnd.Next(min,max);
+                    player2Live = t.Elapsed;
+                }
+                switch (gamemode)
+                {
+                    case 1:
+                        if (Player1Value * Player2Value == GoalValue)
+                        {
+                            success();
+                        }
+                        break;
+                    case 2:
+                        if (Player1Value + Player2Value == GoalValue)
+                        {
+                            success();
+                        }
+                        break;
+                    case 3:
+                        if (Player1Value - Player2Value == GoalValue)
+                        {
+                            success();
+                        }
+                        if (Player2Value - Player1Value == GoalValue)
+                        {
+                            success();
+                        }
+                        break;
+                    case 4:
+                        if (Player1Value / Player2Value == GoalValue)
+                        {
+                            success();
+                        }
+                        if (Player2Value / Player1Value == GoalValue)
+                        {
+                            success();
+                        }
+                        break;
+                }
+
+
+            }
+        }
+    }
     public class GameServer
     {
         public int Player1Value { get; set; } = 10;
@@ -96,7 +179,7 @@ namespace CoOpCalculator.Data
             }
         }
         public string returnMessage = "";
-        private void Player2DC()
+        public void Player2DC()
         {
             t.Stop();
 
@@ -104,7 +187,7 @@ namespace CoOpCalculator.Data
             ingame = false;
         }
 
-        private void Player1DC()
+        public void Player1DC()
         {
             t.Stop();
 
@@ -112,7 +195,7 @@ namespace CoOpCalculator.Data
             ingame = false;
         }
 
-        private void success()
+        public void success()
         {
             t.Stop();
             prizeFull = genPrize();
@@ -124,11 +207,11 @@ namespace CoOpCalculator.Data
                 return prizeFull.Substring(0, 1);
             }
         }
-        private string genPrize()
+        public string genPrize()
         {
             Random rnd = new Random();
             var x = rnd.Next(1, 100 * Math.Min(gamemode, 2)) * Math.Min(gamemode, 2);
-            var g = (50 - t.Elapsed.Seconds);
+            var g = (35 - t.Elapsed.Seconds);
             var s = (80 - t.Elapsed.Seconds);
 
             if (x<= g)
