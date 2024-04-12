@@ -246,12 +246,11 @@
         <option value="3">Subtract</option>
         <option value="4">Any</option>
     </InputSelect>
-        <p>@ss.queued People in the queue</p>
         <button style="width:-webkit-fill-available;" class="btn btn-primary" @onclick="Play">Play</button>
     @if (t.IsRunning)
     {
-        <p>In Queue</p>
-        <p>@t.Elapsed.Seconds</p>
+        <p>In Queue Estimated time: 10 Seconds</p>
+        <p>@t.Elapsed.Seconds Seconds</p>
         <button style="width:-webkit-fill-available;" class="btn btn-primary" @onclick="StopMatching">Stop</button>
     }
     }
