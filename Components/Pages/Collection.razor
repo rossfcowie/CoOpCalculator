@@ -9,7 +9,7 @@
 @inject ServerService ss;
 @inject IJSRuntime JSRuntime
 
-<h3>Collection</h3>
+<h3>Collection @percentage.ToString() %</h3>
 @if (myCollection is not null)
 {
     int z = 9;
@@ -26,12 +26,81 @@
     </div>
 }
 @code {
+    private double percentage { get; set; }
+    private double Percentage()
+    {
+        int total = 0;
+        int earned = 0;
+        foreach (byte m in myCollection)
+        {
+            total +=6;
+            switch (m)
+            {
+                case <= 0:
+                    earned += 0;
+                    break;
+                case > 0 and  <= 14:
+                    earned += 1;
+                    break;
+                case > 14 and <= 28:
+                    earned += 2;
+                    break;
+                case > 28 and <= 35:
+                    earned += 1;
+                    break;
+                case > 35 and <= 42:
+                    earned += 2;
+                    break;
+                case > 42 and <= 49:
+                    earned += 3;
+                    break;
+                default:
+                    earned += 0;
+                    break;
+            }
+            if(m > 0)
+            {
+                switch (m%7)
+                {
+                    case 0:
+                        earned += 3;
+                        break;
+                    case 1:
+                        earned += 1;
+                        break;
+                    case 2:
+                        earned += 1;
+                        break;
+                    case 3:
+                        earned += 1;
+                        break;
+                    case 4:
+                        earned += 2;
+                        break;
+                    case 5:
+                        earned += 2;
+                        break;
+                    case 6:
+                        earned += 2;
+                        break;
+                    default:
+                        earned += 0;
+                        break;
+                }
+            }
+
+
+        }
+        return Math.Truncate(((double)earned / total) * 100);
+    }
+
     private byte[] myCollection { get; set; } = new byte[90];
-    
+
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         myCollection = await GetByteArrayAsync();
+        percentage = Percentage();
         InvokeAsync(StateHasChanged);
     }
     private async Task save()
@@ -43,7 +112,7 @@
         await JSRuntime.InvokeVoidAsync("localStorage.setItem", "myStats", Convert.ToBase64String(randomBytes));
 
         myCollection =  randomBytes;
-        
+
     }
     private async Task<Byte[]> GetByteArrayAsync()
     {

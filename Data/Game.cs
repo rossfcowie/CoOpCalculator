@@ -115,11 +115,15 @@ namespace CoOpCalculator.Data
         private void success()
         {
             t.Stop();
-            prize = genPrize();
+            prizeFull = genPrize();
             returnMessage = $"You got a {prize} Card!  Time:";
             ingame = false;
         }
-        public string prize;
+        public string prizeFull;
+        public string prize { get {
+                return prizeFull.Substring(0, 1);
+            }
+        }
         private string genPrize()
         {
             Random rnd = new Random();
@@ -130,15 +134,15 @@ namespace CoOpCalculator.Data
             if (x<= g)
             {
 
-                return "G";
+                return "Gold";
             }
             if (x <= s)
             {
 
-                return "S";
+                return "Silver";
             }
 
-                    return "B";
+                    return "Bronze";
         }
         public GameServer() { 
         

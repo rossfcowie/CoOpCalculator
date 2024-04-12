@@ -105,9 +105,13 @@
         }
         public Boolean getCardStar(int i, string level, string gm)
         {
+            if (10 > i || i>99 )
+            {
+                return false;
+            }
             byte b = (byte)collection.GetValue(i - 10);
-            string c = getCardBacks(b);
-            string s = getCardStars(b);
+            string c = "" + getCardBacks(b);
+            string s = "" + getCardStars(b);
             Boolean isitnew = true;
             if (c.Contains(level))
             {
@@ -192,7 +196,16 @@
         
             if (isitnew)
             {
-                collection.SetValue((byte)(getCardBacks(c) + getCardStars(s)), i - 10);
+                byte myb = (byte)(getCardBacks(c) + getCardStars(s));
+                if ( myb != b)
+                {
+                    collection.SetValue(myb, i - 10);
+
+                }
+                else
+                {
+                    return false;
+                }
 
             }
             return isitnew;
