@@ -39,7 +39,7 @@ namespace CoOpCalculator.Data
             matchMake();
             var x = id.id;
             id = getbyID(x);
-            if (id.matched || t.Seconds < 10) { 
+            if (id.matched || t.Seconds < 6) { 
             return id.matched;
             }
             else
